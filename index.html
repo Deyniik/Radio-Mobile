@@ -6,7 +6,6 @@
     <title>Deynik Radio Mobile</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📻</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -14,290 +13,535 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     
     <style>
-        /* --- Общие переменные --- */
-        :root{
-            --bg:#0b0b0b;
-            --panel:#111214;
-            --accent-green: #20d26a;
-            --accent-green-dim: #0f8b45;
-            --muted:#8a8a8a;
-            --glass: rgba(255,255,255,0.03);
-            --radius:18px;
-            --rounded-top:30px;
-            --shadow-dark: 0 6px 24px rgba(0,0,0,0.7);
-            --neon-glow: 0 0 12px rgba(32,210,106,0.18);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
         }
-
-        /* --- Базовый ресет --- */
-        *{box-sizing:border-box}
-        html,body{height:100%}
-        body{
-            margin:0;
-            background:linear-gradient(180deg,#030303 0%, #080808 100%);
-            font-family: "Roboto", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial;
-            color:#e6e6e6;
-            -webkit-font-smoothing:antialiased;
-            -moz-osx-font-smoothing:grayscale;
-            display:flex;
-            align-items:flex-start;
-            justify-content:center;
-            padding:22px 12px;
-            overflow-x: hidden;
-        }
-
-        /* --- Контейнер мобильного макета --- */
-        .phone {
-            width: 360px; /* ширина макета для телефона — можно менять */
-            max-width: 94vw;
-            background:linear-gradient(180deg,#080808 0%, #050505 100%);
-            border-radius:26px;
-            box-shadow: var(--shadow-dark);
-            overflow:hidden;
-            border:1px solid rgba(255,255,255,0.03);
+        
+        body {
+            background-color: #121212;
+            color: #FFFFFF;
+            height: 100vh;
+            overflow: hidden;
             position: relative;
         }
-
-        /* Заголовок (Deynik Radio) */
-        .header {
-            background: #040404;
-            padding:12px 0;
-            text-align:center;
-            font-family: "VT323", monospace;
-            font-size:32px;
-            color:var(--accent-green);
-            letter-spacing:2px;
-            text-shadow: 0 0 6px rgba(32,210,106,0.24), 0 1px 0 rgba(0,0,0,0.75);
+        
+        /* РЕТРО ЭФФЕКТЫ */
+        .crt-effect::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0.1) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.15;
+        }
+        
+        .vintage-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0.1) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.1;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #121212;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-gif {
+            width: 150px;
+            height: 150px;
+            background: url('https://i.pinimg.com/originals/3b/06/ee/3b06ee2cc6a317ccdc098b4ab36a8388.gif') center/cover no-repeat;
+        }
+        
+        .loading-text {
+            margin-top: 15px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1DB954;
+            text-shadow: 0 0 10px rgba(29, 185, 84, 0.7);
+            letter-spacing: 1px;
+            animation: flicker 1.5s infinite alternate;
+        }
+        
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 27%, 29%, 31%, 33%, 35%, 37%, 39%, 80%, 100% {
+                opacity: 1;
+                text-shadow: 0 0 10px rgba(29, 185, 84, 0.7), 0 0 20px rgba(29, 185, 84, 0.5);
+            }
+            20%, 22%, 24%, 26%, 28%, 30%, 32%, 34%, 36%, 38%, 40%, 60% {
+                opacity: 0.6;
+                text-shadow: 0 0 5px rgba(29, 185, 84, 0.5);
+            }
+            65%, 70%, 75% {
+                opacity: 0.9;
+                text-shadow: 0 0 15px rgba(29, 185, 84, 0.6), 0 0 25px rgba(29, 185, 84, 0.4);
+            }
+            85%, 90%, 95% {
+                opacity: 0.7;
+                text-shadow: 0 0 8px rgba(29, 185, 84, 0.6);
+            }
+        }
+        
+        .container {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            padding: 10px;
+            gap: 10px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
-            z-index: 10;
         }
-
-        /* Верхняя панель с главным изображением */
-        .cover {
-            position:relative;
-            height: 220px; /* высота окна с картинкой как на фото */
-            background: #111;
-            display:flex;
-            align-items:flex-start;
-            justify-content:center;
-            overflow:hidden;
+        
+        .logo {
+            font-size: 1.5rem;
+            color: #1DB954;
+            text-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
         }
-
-        /* фон-картинка — pixel art */
-        .cover .art {
-            width:100%;
-            height:100%;
-            object-fit:cover;
-            display:block;
-            /* пикселизация, если картинка пиксель-арт */
-            image-rendering: pixelated;
-            filter:contrast(92%) saturate(85%);
+        
+        .header-buttons {
+            display: flex;
+            gap: 8px;
         }
-
-        /* затемнение нижней части картинки (как в фото) */
-        .cover::after{
-            content:"";
-            position:absolute;
-            left:0;right:0;bottom:0;
-            height:52%;
-            background:linear-gradient(transparent, rgba(3,3,3,0.95));
-            pointer-events:none;
-        }
-
-        /* Плей контролы поверх картинки */
-        .controls {
-            position:absolute;
-            left:50%;
-            transform:translateX(-50%);
-            bottom:28px;
-            display:flex;
-            gap:18px;
-            align-items:center;
-            z-index:10;
-        }
-        .control-btn {
-            width:44px;
-            height:44px;
-            border-radius:50%;
-            background:rgba(0,0,0,0.45);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-            border:1px solid rgba(255,255,255,0.03);
+        
+        .header-btn {
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
         
-        .control-btn:hover {
-            background:rgba(32,210,106,0.2);
+        .header-btn:hover {
+            background: rgba(29, 185, 84, 0.3);
+            transform: scale(1.05);
         }
         
-        /* центральная кнопка Play */
-        .control-btn.play{
-            width:66px;
-            height:66px;
-            background:linear-gradient(180deg,var(--accent-green), var(--accent-green-dim));
-            box-shadow: var(--neon-glow), 0 8px 28px rgba(10,10,10,0.6);
-            border:none;
-        }
-        
-        .control-btn.play:hover {
-            box-shadow: 0 0 20px rgba(32,210,106,0.5), 0 8px 28px rgba(10,10,10,0.6);
-        }
-        
-        .control-btn svg{ width:22px; height:22px; fill:#fff; opacity:0.95 }
-
-        /* Кнопка 'выбрать радио' */
-        .choose {
-            margin:14px 18px;
-            border-radius:14px;
-            padding:14px 18px;
-            text-align:center;
-            font-size:22px;
-            font-weight:700;
-            color:var(--accent-green);
-            background:linear-gradient(180deg, rgba(32,210,106,0.04), rgba(10,10,10,0.02));
-            border:1px solid rgba(32,210,106,0.09);
-            box-shadow:inset 0 -2px 0 rgba(0,0,0,0.5);
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
         
-        .choose:hover {
-            background:linear-gradient(180deg, rgba(32,210,106,0.08), rgba(10,10,10,0.04));
-            border:1px solid rgba(32,210,106,0.15);
+        .user-profile:hover {
+            background: rgba(29, 185, 84, 0.3);
         }
-
-        /* --- Чат панель --- */
-        .chat-wrap{
-            margin: 8px 12px 18px 12px;
-            border-radius:14px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
-            padding:12px;
-            border:1px solid rgba(255,255,255,0.03);
-            box-shadow: 0 8px 26px rgba(0,0,0,0.45) inset;
+        
+        .user-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1DB954 0%, #191414 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
         }
-
-        .chat-title{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            color:var(--accent-green);
-            font-weight:700;
-            font-family: "VT323", monospace;
-            margin-bottom:8px;
-            font-size:20px;
+        
+        .user-name {
+            font-size: 0.8rem;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        .chat-list{
-            display:flex;
-            flex-direction:column;
-            gap:10px;
-            max-height:380px; /* чтобы чат был прокручиваемый */
-            overflow:auto;
-            padding-right:6px;
+        
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .gif-container {
+            flex: 1;
+            background: #191414;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .gif-placeholder {
+            width: 100%;
+            height: 100%;
+            background: url('https://i.pinimg.com/originals/7d/04/0e/7d040e94931427709008aaeda14db9c8.gif') center/cover no-repeat;
+        }
+        
+        .now-playing {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .now-playing h3 {
+            font-size: 0.9rem;
+            color: #1DB954;
+            margin-bottom: 3px;
+        }
+        
+        .now-playing p {
+            font-size: 0.7rem;
+            color: #B3B3B3;
+        }
+        
+        .player-container {
+            background: #191414;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .station-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .player-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1DB954 0%, #191414 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            box-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
+        }
+        
+        .player-icon.playing {
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .station-text {
+            flex: 1;
+        }
+        
+        .station-text h2 {
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+            color: #1DB954;
+        }
+        
+        .station-text p {
+            color: #B3B3B3;
+            font-size: 0.8rem;
+        }
+        
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .player-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: rgba(50, 50, 50, 0.8);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .btn:hover {
+            background: rgba(29, 185, 84, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .btn-play {
+            background: linear-gradient(135deg, #1DB954 0%, #191414 100%);
+            width: 44px;
+            height: 44px;
+            font-size: 1.2rem;
+            box-shadow: 0 0 12px rgba(29, 185, 84, 0.6);
+        }
+        
+        .btn-play:hover {
+            box-shadow: 0 0 16px rgba(29, 185, 84, 0.8);
+        }
+        
+        .side-buttons {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .tab-navigation {
+            display: flex;
+            background: rgba(40, 40, 40, 0.8);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #B3B3B3;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .tab-btn.active {
+            background: rgba(29, 185, 84, 0.3);
+            color: #1DB954;
+        }
+        
+        .tab-content {
+            flex: 1;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .station-list {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: rgba(32,210,106,0.3) transparent;
+            scrollbar-color: rgba(29, 185, 84, 0.3) #191414;
+            padding-right: 5px;
         }
         
-        .chat-list::-webkit-scrollbar {
+        .station-list::-webkit-scrollbar {
             width: 4px;
         }
         
-        .chat-list::-webkit-scrollbar-track {
-            background: transparent;
+        .station-list::-webkit-scrollbar-track {
+            background: #191414;
         }
         
-        .chat-list::-webkit-scrollbar-thumb {
-            background-color: rgba(32,210,106,0.3);
+        .station-list::-webkit-scrollbar-thumb {
+            background-color: rgba(29, 185, 84, 0.3);
+            border-radius: 5px;
+        }
+        
+        .station-list li {
+            padding: 10px 12px;
+            margin: 4px 0;
+            background: rgba(40, 40, 40, 0.8);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid #1DB954;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .station-list li:hover {
+            background: rgba(29, 185, 84, 0.2);
+        }
+        
+        .station-list li.active {
+            background: rgba(29, 185, 84, 0.3);
+            border-left: 3px solid #1DB954;
+            box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
+        }
+        
+        .station-icon {
+            margin-right: 10px;
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(29, 185, 84, 0.3) #191414;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: #191414;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: rgba(29, 185, 84, 0.3);
             border-radius: 2px;
         }
-
-        /* Один блок сообщения (серый фон с закруглением) */
-        .msg{
-            background: rgba(255,255,255,0.02);
-            border-radius:10px;
-            padding:10px 12px;
-            display:flex;
-            gap:12px;
-            align-items:center;
-            border:1px solid rgba(255,255,255,0.02);
-            font-size:15px;
+        
+        .message {
+            padding: 6px 8px;
+            margin: 4px 0;
+            background: rgba(40, 40, 40, 0.6);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.3;
+            word-wrap: break-word;
         }
-
-        .username{
-            color:var(--accent-green);
-            font-weight:700;
-            min-width:110px;
-            font-family: "VT323", monospace;
-            font-size:14px;
+        
+        .message-user {
+            font-weight: bold;
+            color: #1DB954;
+            margin-right: 5px;
         }
-        .msg-content{
-            color:#dcdcdc;
-            opacity:0.95;
-            flex:1;
-            font-size:15px;
-            word-break: break-word;
+        
+        .message-time {
+            font-size: 0.7rem;
+            color: #888;
+            margin-left: 5px;
         }
-        .msg-time{
-            color:var(--muted);
-            font-size:12px;
-            margin-left:10px;
-            white-space:nowrap;
+        
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
         }
-
-        /* Инпут внизу чата */
+        
         .chat-input {
-            margin-top:12px;
-            display:flex;
-            gap:10px;
-            align-items:center;
-        }
-        .chat-input .text{
-            flex:1;
-            background: rgba(255,255,255,0.02);
-            border-radius:28px;
-            padding:12px 16px;
-            font-size:15px;
-            color:#ddd;
-            border:1px solid rgba(255,255,255,0.02);
-            outline:none;
+            flex: 1;
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            outline: none;
+            height: 36px;
         }
         
-        .chat-input .text:focus {
-            border:1px solid rgba(32,210,106,0.2);
+        .chat-input:focus {
+            border-color: #1DB954;
         }
         
-        .send-btn{
-            width:46px;
-            height:46px;
-            border-radius:50%;
-            display:grid;
-            place-items:center;
-            background:linear-gradient(180deg,var(--accent-green),var(--accent-green-dim));
-            border:none;
-            box-shadow: var(--neon-glow);
+        .chat-send-btn {
+            background: rgba(29, 185, 84, 0.3);
+            border: 1px solid #1DB954;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .send-btn:hover {
-            box-shadow: 0 0 15px rgba(32,210,106,0.4);
+        .chat-send-btn:hover:not(:disabled) {
+            background: rgba(29, 185, 84, 0.5);
         }
         
-        .send-btn svg{ width:20px; height:20px; fill:#fff }
-
-        /* Модальные окна */
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 10000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.8);
         }
-
+        
         .modal-content {
             background-color: #191414;
             margin: 10% auto;
@@ -305,10 +549,10 @@
             border-radius: 12px;
             width: 90%;
             max-width: 400px;
-            border: 2px solid var(--accent-green);
+            border: 2px solid #1DB954;
             position: relative;
         }
-
+        
         .close {
             color: #aaa;
             float: right;
@@ -319,125 +563,153 @@
             right: 15px;
             cursor: pointer;
         }
-
+        
         .close:hover {
-            color: var(--accent-green);
-        }
-
-        /* Список станций */
-        .stations-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(32,210,106,0.3) transparent;
+            color: #1DB954;
         }
         
-        .stations-list::-webkit-scrollbar {
-            width: 4px;
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1DB954;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
-        .stations-list::-webkit-scrollbar-track {
-            background: transparent;
+        .notification.show {
+            opacity: 1;
         }
         
-        .stations-list::-webkit-scrollbar-thumb {
-            background-color: rgba(32,210,106,0.3);
-            border-radius: 2px;
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(40, 40, 40, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 0;
+            margin-top: 5px;
+            min-width: 150px;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
-
-        .station-item {
-            background: rgba(255,255,255,0.02);
-            border-radius: 10px;
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        
+        .user-dropdown.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 8px 12px;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.02);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
-        .station-item:hover {
-            background: rgba(32,210,106,0.05);
-            border: 1px solid rgba(32,210,106,0.1);
+        
+        .dropdown-item:hover {
+            background: rgba(29, 185, 84, 0.2);
         }
-
-        .station-item.active {
-            background: rgba(32,210,106,0.1);
-            border: 1px solid var(--accent-green);
+        
+        .nickname-input {
+            width: 100%;
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            margin: 15px 0;
         }
-
-        .station-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-green) 0%, #191414 100%);
+        
+        .nickname-input:focus {
+            border-color: #1DB954;
+        }
+        
+        .nickname-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .nickname-btn {
+            background: rgba(29, 185, 84, 0.3);
+            border: 1px solid #1DB954;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nickname-btn:hover {
+            background: rgba(29, 185, 84, 0.5);
+        }
+        
+        .nickname-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .nickname-btn.cancel:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .random-station-btn {
+            background: rgba(29, 185, 84, 0.2);
+            border: 1px solid rgba(29, 185, 84, 0.5);
+            color: #1DB954;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            color: white;
-        }
-
-        .station-info {
-            flex: 1;
-        }
-
-        .station-name {
-            font-weight: bold;
-            color: var(--accent-green);
-            margin-bottom: 4px;
-        }
-
-        .station-description {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .station-likes {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        /* Информация о текущем треке */
-        .now-playing {
-            margin: 10px 18px;
-            padding: 12px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-
-        .now-playing-title {
-            font-family: "VT323", monospace;
-            color: var(--accent-green);
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-
-        .track-info {
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .artist-info {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        /* Адаптив: если шире — центрируем, но макет мобильный по дизайну */
-        @media (min-width:420px){
-            .phone{ width: 420px; }
+            gap: 8px;
         }
         
-        /* Эффект лайка */
+        .random-station-btn:hover {
+            background: rgba(29, 185, 84, 0.3);
+            box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
+        }
+        
+        .volume-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 10;
+            border: 2px solid #1DB954;
+            box-shadow: 0 0 20px rgba(29, 185, 84, 0.5);
+            display: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: opacity 0.3s ease;
+        }
+        
+        .volume-display.show {
+            display: block;
+            opacity: 1;
+        }
+        
         .heart-effect {
             position: fixed;
             top: 50%;
@@ -448,7 +720,6 @@
             z-index: 1000;
             pointer-events: none;
             opacity: 0;
-            animation: heartPop 1.5s ease-out;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -458,11 +729,10 @@
         .heart-text {
             margin-top: 20px;
             font-size: 2.5rem;
-            color: var(--accent-green);
-            text-shadow: 0 0 15px rgba(32,210,106,0.9);
+            color: #1DB954;
+            text-shadow: 0 0 15px rgba(29, 185, 84, 0.9);
             font-weight: bold;
             opacity: 0;
-            animation: textFade 1.5s ease-out 0.3s forwards;
         }
         
         @keyframes heartPop {
@@ -511,106 +781,145 @@
             }
         }
         
-        /* Уведомления */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--accent-green);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+        .reload-animation {
+            animation: spin 0.5s linear;
         }
-        
-        .notification.show {
-            opacity: 1;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body>
-    <!-- Модальное окно для выбора станций -->
-    <div class="modal" id="stationsModal">
-        <div class="modal-content">
-            <span class="close" id="closeStationsModal">&times;</span>
-            <h3 style="color: var(--accent-green); margin-bottom: 15px;">Выберите радиостанцию</h3>
-            <div class="stations-list" id="stationsList">
-                <!-- Станции будут добавлены через JavaScript -->
+<body class="retro-theme">
+    <div class="vintage-overlay"></div>
+    
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-gif"></div>
+        <div class="loading-text">Deynik Radio</div>
+    </div>
+    
+    <div class="container crt-effect" id="mainContainer">
+        <header>
+            <div class="logo">Deynik Radio</div>
+            <div class="header-buttons">
+                <button class="header-btn" id="chat-btn" title="Чат">
+                    <i class="fas fa-comments"></i>
+                </button>
+                <button class="header-btn" id="user-btn" title="Профиль">
+                    <i class="fas fa-user"></i>
+                </button>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="gif-container crt-effect">
+                <div class="gif-placeholder" id="mainGif"></div>
+                <div class="now-playing">
+                    <h3>Сейчас играет: <span id="current-track">"Coffee Break"</span></h3>
+                    <p>Исполнитель: <span id="current-artist">Beatsmith</span></p>
+                </div>
+            </div>
+            
+            <div class="player-container crt-effect">
+                <div class="station-info">
+                    <div class="player-icon" id="player-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="station-text">
+                        <h2 id="player-station">KISS FM</h2>
+                        <p id="player-description">Лучшие мировые хиты в отличном качестве</p>
+                    </div>
+                </div>
+                
+                <div class="player-controls">
+                    <div class="player-buttons">
+                        <button class="btn" id="prev-btn">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="btn btn-play" id="play-btn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="btn" id="next-btn">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="side-buttons">
+                    <button class="btn" id="refresh-btn" title="Обновить поток">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="btn" id="like-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="stations">Станции</button>
+                <button class="tab-btn" data-tab="chat">Чат</button>
+            </div>
+            
+            <div class="tab-content active" id="stations-tab">
+                <ul class="station-list" id="station-list"></ul>
+                <div class="random-station-btn" id="random-station-btn">
+                    <i class="fas fa-random"></i> Случайное радио
+                </div>
+            </div>
+            
+            <div class="tab-content" id="chat-tab">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message">
+                            <span class="message-user">Система:</span>
+                            Добро пожаловать в чат Deynik Radio!
+                            <span class="message-time">только что</span>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Введите сообщение..." maxlength="200">
+                        <button class="chat-send-btn" id="chat-send-btn" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Эффект лайка -->
-    <div class="heart-effect" id="heartEffect">
-        <i class="fas fa-heart"></i>
-        <div class="heart-text">Нравится!</div>
-    </div>
-
-    <!-- Уведомление -->
-    <div class="notification" id="notification">Текст уведомления</div>
-
-    <div class="phone" role="application" aria-label="Deynik Radio mobile mock">
-        <!-- Заголовок с неоновым текстом -->
-        <div class="header">Deynik Radio</div>
-
-        <!-- Верхняя картинка -->
-        <div class="cover" aria-hidden="false">
-            <!-- Оборачиваем картинку в тег img для дипсика, который, возможно, не видит background-image -->
-            <img class="art" src="https://i.pinimg.com/originals/7d/04/0e/7d040e94931427709008aaeda14db9c8.gif" alt="cover art" id="coverArt" />
-            <!-- Контролы поверх картинки -->
-            <div class="controls" aria-hidden="false">
-                <div class="control-btn" title="like" id="likeBtn">
-                    <!-- heart outline icon -->
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 21.35l-1.1-.99C5.14 15.36 2 12.28 2 8.5 2 6.01 4.01 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 17.99 4 20 6.01 20 8.5c0 3.78-3.14 6.86-8.99 11.86l-1.11.99z"/></svg>
-                </div>
-                <div class="control-btn" title="prev" id="prevBtn">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6v12l10-6z"/></svg>
-                </div>
-                <div class="control-btn play" title="play/pause" id="playBtn">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                </div>
-                <div class="control-btn" title="next" id="nextBtn">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6v12l10-6z"/></svg>
-                </div>
-                <div class="control-btn" title="refresh" id="refreshBtn">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Информация о текущем треке -->
-        <div class="now-playing">
-            <div class="now-playing-title">Сейчас играет</div>
-            <div class="track-info" id="currentTrack">"Coffee Break"</div>
-            <div class="artist-info" id="currentArtist">Beatsmith</div>
-            <div class="artist-info" id="currentStationName">KISS FM</div>
-        </div>
-
-        <!-- Кнопка "выбрать радио" -->
-        <div class="choose" id="chooseBtn">выбрать радио</div>
-
-        <!-- Блок чата -->
-        <div class="chat-wrap" aria-live="polite">
-            <div class="chat-title">Чат</div>
-
-            <div class="chat-list" id="chatList">
-                <!-- Сообщения будут добавлены через JavaScript -->
-            </div>
-
-            <!-- Инпут -->
-            <div class="chat-input">
-                <input class="text" id="chatInput" placeholder="Введите сообщение..." aria-label="Введите сообщение" />
-                <button class="send-btn" id="sendBtn" title="Отправить">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <span class="close" id="closeUserModal">&times;</span>
+            <h3>Профиль пользователя</h3>
+            <div id="auth-section">
+                <button class="random-station-btn" id="googleLoginBtn" style="width: 100%;">
+                    <i class="fab fa-google"></i> Войти через Google
                 </button>
             </div>
         </div>
     </div>
+    
+    <div class="modal" id="nicknameModal">
+        <div class="modal-content">
+            <span class="close" id="closeNicknameModal">&times;</span>
+            <h3>Сменить никнейм</h3>
+            <input type="text" class="nickname-input" id="nickname-input" placeholder="Введите новый никнейм" maxlength="20">
+            <div class="nickname-buttons">
+                <button class="nickname-btn cancel" id="cancelNicknameBtn">Отмена</button>
+                <button class="nickname-btn" id="saveNicknameBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="heart-effect" id="heartEffect">
+        <i class="fas fa-heart"></i>
+        <div class="heart-text">Нравится!</div>
+    </div>
+    
+    <div class="notification" id="notification">Текст уведомления</div>
 
     <script>
-        // Инициализация Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBk4nxZ1ldNQUCxsbgaeYTkm9stq0o9o2Q",
             authDomain: "deygram-e4814.firebaseapp.com",
@@ -620,22 +929,19 @@
             appId: "1:591207353726:web:d20f5e648d3daf86fcb72f"
         };
 
-        // Инициализируем Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Объект с радиостанциями
         const radioStations = {
             kissint: {
                 name: "KISS FM",
-                url: "https://cloud.revma.ihrhls.com/zc185?rj-org=n08a-e2&rj-ttl=5&rj-tok=AAABmWcyp-cAjUh581g70H83Ow",
+                url: "https://cloud.revma.ihrhls.com/zc185?rj-org=n3bb-e2&rj-ttl=5&rj-tok=AAABmoBxYDMAAxQEnNjentV4ug",
                 description: "Лучшие мировые хиты в отличном качестве",
                 currentTrack: "Популярные хиты",
                 currentArtist: "KISS FM",
                 quality: "128kbps",
-                icon: "fas fa-heart",
-                category: "international"
+                icon: "fas fa-heart"
             },
             gaga: {
                 name: "Lady Gaga Radio",
@@ -644,8 +950,7 @@
                 currentTrack: "Lady Gaga Hits",
                 currentArtist: "Lady Gaga",
                 quality: "128kbps",
-                icon: "fas fa-paw",
-                category: "international"
+                icon: "fas fa-paw"
             },
             rp: {
                 name: "Radio Paradise",
@@ -654,8 +959,7 @@
                 currentTrack: "Eclectic Mix",
                 currentArtist: "Radio Paradise",
                 quality: "FLAC 900+kbps",
-                icon: "fas fa-music",
-                category: "no-copyright"
+                icon: "fas fa-music"
             },
             lofi: {
                 name: "LoFi Girl",
@@ -664,58 +968,7 @@
                 currentTrack: "Chill Beats",
                 currentArtist: "LoFi Artist",
                 quality: "192kbps",
-                icon: "fas fa-moon",
-                category: "lofi"
-            },
-            z100: {
-                name: "Z100 New York",
-                url: "https://stream.revma.ihrhls.com/zc1477",
-                description: "Поп-хиты от iHeartRadio",
-                currentTrack: "Top 40 Hit",
-                currentArtist: "Popular Artist",
-                quality: "128kbps",
-                icon: "fas fa-broadcast-tower",
-                category: "international"
-            },
-            jazz: {
-                name: "Jazz24",
-                url: "https://knkx-live-a.edge.audiocdn.com/6285_128k?aw_0_1st.playerid=jazz24.org&uuid=s9a9vs32",
-                description: "Лучшие джазовые композиции",
-                currentTrack: "Smooth Jazz",
-                currentArtist: "Jazz Master",
-                quality: "192kbps",
-                icon: "fas fa-music",
-                category: "international"
-            },
-            chillhop: {
-                name: "Chillhop Radio",
-                url: "https://stream-178.zeno.fm/f3wvbbqmdg8uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJmM3d2YmJxbWRnOHV2IiwiaG9zdCI6InS0cmVhbS0xNzguemVuby.фм",
-                description: "Расслабляющие биты для работы и отдыха без авторских прав",
-                currentTrack: "Chill Beats",
-                currentArtist: "Chillhop Music",
-                quality: "128kbps",
-                icon: "fas fa-moon",
-                category: "lofi"
-            },
-            lofihiphop: {
-                name: "LoFi Hip Hop",
-                url: "https://stream-158.zeno.fm/0r0xa792kwzuv",
-                description: "Лучшие хип-хоп биты без авторских прав",
-                currentTrack: "Hip Hop Beats",
-                currentArtist: "LoFi Artist",
-                quality: "128kbps",
-                icon: "fas fa-headphones",
-                category: "lofi"
-            },
-            lofigirl: {
-                name: "LoFi Girl",
-                url: "https://play.streamafrica.net/lofiradio",
-                description: "Легендарный лоу-фай стрим без авторских прав",
-                currentTrack: "Study Beats",
-                currentArtist: "LoFi Girl",
-                quality: "192kbps",
-                icon: "fas fa-moon",
-                category: "lofi"
+                icon: "fas fa-moon"
             },
             minecraft: {
                 name: "MINECRAFT Lo Fi",
@@ -724,331 +977,117 @@
                 currentTrack: "Minecraft Ambience",
                 currentArtist: "C418 Lo-Fi Remix",
                 quality: "128kbps",
-                icon: "fas fa-cube",
-                category: "no-copyright"
-            },
-            halloween: {
-                name: "Halloween Radio",
-                url: "https://radio1.streamserver.link:8000/hrm-aac",
-                description: "Музыка для Хэллоуина и ужастиков",
-                currentTrack: "Spooky Sounds",
-                currentArtist: "Halloween FM",
-                quality: "128kbps",
-                icon: "fas fa-ghost",
-                category: "thematic"
+                icon: "fas fa-cube"
             }
         };
 
-        // Массив с гифками для обычных станций
         const gifs = [
             'https://i.pinimg.com/originals/7d/04/0e/7d040e94931427709008aaeda14db9c8.gif',
             'https://i.pinimg.com/originals/20/c8/3d/20c83d1cb257a6c4e5f68960ef0c3046.gif',
             'https://i.pinimg.com/originals/9a/99/a1/9a99a10635e27f336c2cd6bec02b2aae.gif',
             'https://i.pinimg.com/originals/13/45/50/13455040862ac9b8e465185878838cf1.gif',
-            'https://i.pinimg.com/originals/93/08/1e/93081e266f7f0b20778d2736978b2e84.gif',
-            'https://i.gifer.com/YMm7.gif',
-            'https://i.pinimg.com/originals/51/7d/50/517d50010dfe6e71d17548cae0f6f0dc.gif',
-            'https://i.pinimg.com/originals/43/1c/e5/431ce5d15aab86f66a91ec9a07c9114f.gif',
-            'https://i.pinimg.com/originals/61/af/12/61af12d5fb3c469039dbdf63d783c95d.gif',
-            'https://i.pinimg.com/originals/2f/10/ce/2f10ce69b96c0611989308b0abc68e70.gif',
-            'https://i.pinimg.com/originals/6a/d2/ee/6ad2ee191d434a996766b500a1eb197e.gif',
-            'https://markiled.github.io/Images/Art/Commissions/Commission-2020-Mar-Raul.gif',
-            'https://i.pinimg.com/originals/6e/fb/de/6efbde2becc91166553e90ca975aaf07.gif',
-            'https://i.pinimg.com/originals/dc/9c/38/dc9c38d59ade3c7e307f64d52b3eba32.gif',
-            'https://i.pinimg.com/originals/0e/85/86/0e8586ecd90850bf236dd7efdf5fa594.gif'
+            'https://i.pinimg.com/originals/93/08/1e/93081e266f7f0b20778d2736978b2e84.gif'
         ];
 
-        // Массив с гифками для Minecraft станции
         const minecraftGifs = [
             'https://i.pinimg.com/originals/44/f2/f6/44f2f6325aa9bf8c93ed6c3d6e8f8d57.gif',
             'https://i.pinimg.com/originals/05/cf/1b/05cf1b97379bb751d2bf03b55ee16c5e.gif',
-            'https://i.pinimg.com/originals/da/85/43/da8543494a3baaec4fc61c2b952f8de0.gif',
-            'https://i.pinimg.com/originals/d9/04/03/d9040300483e5e5465e56ddb713eeb1b.gif',
-            'https://i.pinimg.com/originals/ac/25/3e/ac253eae753d0442a50f061051956cef.gif',
-            'https://i.pinimg.com/originals/2a/af/bf/2aafbff9c75012c41c2c9abd92d5de35.gif',
-            'https://i.pinimg.com/originals/a3/b4/55/a3b4558c0f0963b7a6135cc4a63b0d15.gif',
-            'https://i.pinimg.com/originals/8a/34/3e/8a343ea387b21d843715d0a3a86059ed.gif'
+            'https://i.pinimg.com/originals/da/85/43/da8543494a3baaec4fc61c2b952f8de0.gif'
         ];
 
-        // Массив ID станций для навигации
         const stationIds = Object.keys(radioStations);
         
-        // Основные переменные
-        let isPlaying = false;
-        let audio = null;
-        let currentStationIndex = 0;
-        let currentStation = stationIds[currentStationIndex];
-        let stationLikes = {};
-        let userLikedStations = new Set();
-        let userNickname = localStorage.getItem('userNickname') || '';
-        let chatUnsubscribe = null;
-        let likesUnsubscribe = null;
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContainer').style.display = 'flex';
+                initApp();
+            }, 1000);
+        };
 
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Получаем элементы DOM
-            const playBtn = document.getElementById('playBtn');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const refreshBtn = document.getElementById('refreshBtn');
-            const likeBtn = document.getElementById('likeBtn');
-            const chooseBtn = document.getElementById('chooseBtn');
-            const stationsModal = document.getElementById('stationsModal');
-            const closeStationsModal = document.getElementById('closeStationsModal');
-            const stationsList = document.getElementById('stationsList');
-            const chatList = document.getElementById('chatList');
-            const chatInput = document.getElementById('chatInput');
-            const sendBtn = document.getElementById('sendBtn');
+        function initApp() {
+            const playButton = document.getElementById('play-btn');
+            const prevButton = document.getElementById('prev-btn');
+            const nextButton = document.getElementById('next-btn');
+            const likeButton = document.getElementById('like-btn');
+            const refreshButton = document.getElementById('refresh-btn');
+            const randomStationBtn = document.getElementById('random-station-btn');
+            const mainGif = document.getElementById('mainGif');
+            const chatBtn = document.getElementById('chat-btn');
+            const userBtn = document.getElementById('user-btn');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const chatInput = document.getElementById('chat-input');
+            const chatSendBtn = document.getElementById('chat-send-btn');
+            const chatMessages = document.getElementById('chat-messages');
+            const userModal = document.getElementById('userModal');
+            const closeUserModal = document.getElementById('closeUserModal');
+            const nicknameModal = document.getElementById('nicknameModal');
+            const closeNicknameModal = document.getElementById('closeNicknameModal');
+            const cancelNicknameBtn = document.getElementById('cancelNicknameBtn');
+            const saveNicknameBtn = document.getElementById('saveNicknameBtn');
+            const nicknameInput = document.getElementById('nickname-input');
+            const googleLoginBtn = document.getElementById('googleLoginBtn');
+            const stationList = document.getElementById('station-list');
             const heartEffect = document.getElementById('heartEffect');
             const notification = document.getElementById('notification');
-
-            // Инициализация аудио
-            audio = new Audio();
-            audio.crossOrigin = 'anonymous';
             
-            // Загружаем лайки из localStorage
-            loadLikesFromStorage();
+            let isPlaying = false;
+            let audio = null;
+            let currentStationIndex = 0;
+            let currentStation = stationIds[currentStationIndex];
+            let userNickname = localStorage.getItem('userNickname') || '';
+            let stationLikes = {};
+            let userLikedStations = new Set();
             
-            // Загружаем станции в модальное окно
-            loadStationsToList(stationsList);
+            loadStationList();
+            updateStationInfo();
+            changeGif();
             
-            // Загружаем чат
-            loadChatMessages();
-            
-            // Устанавливаем начальную станцию
-            setStation(currentStation);
-            
-            // Проверяем авторизацию
-            checkAuth();
-
-            // Обработчики событий для кнопок управления
-            playBtn.addEventListener('click', togglePlay);
-            prevBtn.addEventListener('click', prevStation);
-            nextBtn.addEventListener('click', nextStation);
-            refreshBtn.addEventListener('click', refreshStation);
-            likeBtn.addEventListener('click', toggleLike);
-            chooseBtn.addEventListener('click', () => stationsModal.style.display = 'block');
-            closeStationsModal.addEventListener('click', () => stationsModal.style.display = 'none');
-            
-            // Закрытие модального окна при клике вне его
-            window.addEventListener('click', (event) => {
-                if (event.target === stationsModal) {
-                    stationsModal.style.display = 'none';
-                }
-            });
-            
-            // Обработчики для чата
-            sendBtn.addEventListener('click', sendMessage);
-            chatInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
-            
-            // Функция переключения воспроизведения
-            function togglePlay() {
-                if (isPlaying) {
-                    audio.pause();
-                    playBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
-                    isPlaying = false;
-                } else {
-                    audio.play().catch(e => {
-                        console.error('Ошибка воспроизведения:', e);
-                        showNotification('Ошибка воспроизведения. Попробуйте другую станцию.');
-                    });
-                    playBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
-                    isPlaying = true;
-                }
-            }
-            
-            // Функция переключения на предыдущую станцию
-            function prevStation() {
-                currentStationIndex = (currentStationIndex - 1 + stationIds.length) % stationIds.length;
-                currentStation = stationIds[currentStationIndex];
-                setStation(currentStation);
-            }
-            
-            // Функция переключения на следующую станцию
-            function nextStation() {
-                currentStationIndex = (currentStationIndex + 1) % stationIds.length;
-                currentStation = stationIds[currentStationIndex];
-                setStation(currentStation);
-            }
-            
-            // Функция обновления текущей станции
-            function refreshStation() {
-                if (audio.src) {
-                    audio.load();
-                    if (isPlaying) {
-                        audio.play().catch(e => {
-                            console.error('Ошибка воспроизведения:', e);
-                        });
-                    }
-                    showNotification('Станция обновлена');
-                }
-            }
-            
-            // Функция лайка станции
-            function toggleLike() {
-                if (userLikedStations.has(currentStation)) {
-                    // Убираем лайк
-                    userLikedStations.delete(currentStation);
-                    stationLikes[currentStation] = Math.max(0, (stationLikes[currentStation] || 0) - 1);
-                    likeBtn.style.background = 'rgba(0,0,0,0.45)';
-                    showNotification('Лайк убран');
-                } else {
-                    // Ставим лайк
-                    userLikedStations.add(currentStation);
-                    stationLikes[currentStation] = (stationLikes[currentStation] || 0) + 1;
-                    likeBtn.style.background = 'rgba(255,0,0,0.3)';
-                    
-                    // Показываем эффект лайка
-                    heartEffect.style.display = 'flex';
-                    setTimeout(() => {
-                        heartEffect.style.display = 'none';
-                    }, 1500);
-                    
-                    showNotification('Станция добавлена в избранное');
-                }
-                
-                // Обновляем отображение лайков в модальном окне
-                updateLikesInModal();
-                
-                // Сохраняем лайки в localStorage
-                saveLikesToStorage();
-                
-                // Обновляем лайки в Firestore
-                updateLikesInFirestore();
-            }
-            
-            // Функция установки станции
-            function setStation(stationId) {
-                const station = radioStations[stationId];
-                
-                // Обновляем информацию о текущем треке
-                document.getElementById('currentTrack').textContent = station.currentTrack;
-                document.getElementById('currentArtist').textContent = station.currentArtist;
-                document.getElementById('currentStationName').textContent = station.name;
-                
-                // Обновляем картинку в зависимости от типа станции
-                const coverArt = document.getElementById('coverArt');
-                if (stationId === 'minecraft') {
-                    // Для Minecraft станции используем специальные гифки
-                    const randomMinecraftGif = minecraftGifs[Math.floor(Math.random() * minecraftGifs.length)];
-                    coverArt.src = randomMinecraftGif;
-                } else {
-                    // Для остальных станций используем обычные гифки
-                    const randomGif = gifs[Math.floor(Math.random() * gifs.length)];
-                    coverArt.src = randomGif;
-                }
-                
-                // Обновляем аудио
-                audio.src = station.url;
-                audio.load();
-                
-                // Если было воспроизведение, продолжаем
-                if (isPlaying) {
-                    audio.play().catch(e => {
-                        console.error('Ошибка воспроизведения:', e);
-                        showNotification('Ошибка воспроизведения. Попробуйте другую станцию.');
-                    });
-                }
-                
-                // Обновляем состояние лайка
-                if (userLikedStations.has(stationId)) {
-                    likeBtn.style.background = 'rgba(255,0,0,0.3)';
-                } else {
-                    likeBtn.style.background = 'rgba(0,0,0,0.45)';
-                }
-                
-                // Закрываем модальное окно выбора станций
-                stationsModal.style.display = 'none';
-                
-                // Обновляем активную станцию в модальном окне
-                updateActiveStationInModal();
-                
-                showNotification(`Слушаем: ${station.name}`);
-            }
-            
-            // Функция загрузки станций в модальное окно
-            function loadStationsToList(container) {
-                container.innerHTML = '';
+            function loadStationList() {
+                stationList.innerHTML = '';
                 
                 stationIds.forEach(stationId => {
-                    const station = radioStations[stationId];
-                    const stationItem = document.createElement('div');
-                    stationItem.className = 'station-item';
+                    const stationData = radioStations[stationId];
+                    
+                    const stationItem = document.createElement('li');
+                    stationItem.setAttribute('data-station', stationId);
+                    
                     if (stationId === currentStation) {
                         stationItem.classList.add('active');
                     }
                     
                     stationItem.innerHTML = `
-                        <div class="station-icon">
-                            <i class="${station.icon}"></i>
-                        </div>
-                        <div class="station-info">
-                            <div class="station-name">${station.name}</div>
-                            <div class="station-description">${station.description}</div>
-                        </div>
-                        <div class="station-likes">
-                            <i class="fas fa-heart"></i>
-                            <span class="likes-count">${stationLikes[stationId] || 0}</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="station-icon"><i class="${stationData.icon}"></i></span> ${stationData.name}
                         </div>
                     `;
                     
-                    stationItem.addEventListener('click', () => {
+                    stationItem.addEventListener('click', function() {
+                        const stationId = this.getAttribute('data-station');
                         currentStationIndex = stationIds.indexOf(stationId);
-                        currentStation = stationId;
-                        setStation(stationId);
+                        isPlaying = true;
+                        playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                        document.getElementById('player-icon').classList.add('playing');
+                        changeStation();
                     });
                     
-                    container.appendChild(stationItem);
+                    stationList.appendChild(stationItem);
                 });
             }
             
-            // Функция обновления активной станции в модальном окне
-            function updateActiveStationInModal() {
-                const stationItems = document.querySelectorAll('.station-item');
-                stationItems.forEach((item, index) => {
-                    if (stationIds[index] === currentStation) {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
-                });
-            }
-            
-            // Функция обновления лайков в модальном окне
-            function updateLikesInModal() {
-                const likesCounts = document.querySelectorAll('.likes-count');
-                stationIds.forEach((stationId, index) => {
-                    likesCounts[index].textContent = stationLikes[stationId] || 0;
-                });
-            }
-            
-            // Функция загрузки лайков из localStorage
-            function loadLikesFromStorage() {
-                const savedLikes = localStorage.getItem('stationLikes');
-                const savedUserLikes = localStorage.getItem('userLikedStations');
-                
-                if (savedLikes) {
-                    stationLikes = JSON.parse(savedLikes);
-                }
-                
-                if (savedUserLikes) {
-                    userLikedStations = new Set(JSON.parse(savedUserLikes));
-                }
-            }
-            
-            // Функция сохранения лайков в localStorage
-            function saveLikesToStorage() {
-                localStorage.setItem('stationLikes', JSON.stringify(stationLikes));
-                localStorage.setItem('userLikedStations', JSON.stringify([...userLikedStations]));
-            }
-            
-            // Функция показа уведомления
-            function showNotification(message) {
+            function showNotification(message, type = 'info') {
                 notification.textContent = message;
+                notification.className = 'notification';
+                
+                if (type === 'success') {
+                    notification.style.background = '#1DB954';
+                } else if (type === 'error') {
+                    notification.style.background = '#FF5722';
+                } else {
+                    notification.style.background = '#2196F3';
+                }
+                
                 notification.classList.add('show');
                 
                 setTimeout(() => {
@@ -1056,113 +1095,393 @@
                 }, 3000);
             }
             
-            // Функция отправки сообщения в чат
-            function sendMessage() {
-                const message = chatInput.value.trim();
-                if (!message) return;
+            function showHeartEffect() {
+                heartEffect.style.display = 'flex';
+                heartEffect.style.opacity = '1';
                 
-                // Если пользователь не авторизован, запрашиваем никнейм
-                if (!userNickname) {
-                    userNickname = prompt('Введите ваш никнейм для чата:');
-                    if (!userNickname) return;
-                    localStorage.setItem('userNickname', userNickname);
-                }
+                heartEffect.style.animation = 'none';
+                void heartEffect.offsetWidth;
                 
-                // Добавляем сообщение в Firestore
-                db.collection('chat').add({
-                    username: userNickname,
-                    message: message,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                }).then(() => {
-                    chatInput.value = '';
-                }).catch(error => {
-                    console.error('Ошибка отправки сообщения:', error);
-                    showNotification('Ошибка отправки сообщения');
-                });
+                heartEffect.style.animation = 'heartPop 1.5s ease-out forwards';
+                
+                const heartText = heartEffect.querySelector('.heart-text');
+                heartText.style.animation = 'textFade 1.5s ease-out 0.3s forwards';
+                
+                setTimeout(() => {
+                    heartEffect.style.display = 'none';
+                }, 1500);
             }
             
-            // Функция загрузки сообщений чата
-            function loadChatMessages() {
-                // Отписываемся от предыдущего слушателя, если он есть
-                if (chatUnsubscribe) {
-                    chatUnsubscribe();
+            function updateAuthUI(user) {
+                const authSection = document.getElementById('auth-section');
+                
+                if (user) {
+                    const displayName = userNickname || user.displayName || 'Пользователь';
+                    const firstLetter = displayName.charAt(0).toUpperCase();
+                    
+                    authSection.innerHTML = `
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div class="user-avatar" style="margin: 0 auto 10px;">${firstLetter}</div>
+                            <div style="font-size: 1.1rem; color: #1DB954; margin-bottom: 5px;">${displayName}</div>
+                            <button class="random-station-btn" id="edit-nickname-btn" style="width: 100%; margin-top: 10px;">
+                                <i class="fas fa-user-edit"></i> Сменить ник
+                            </button>
+                        </div>
+                        <button class="random-station-btn" id="sign-out-btn" style="width: 100%; background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.5);">
+                            <i class="fas fa-sign-out-alt"></i> Выйти
+                        </button>
+                    `;
+                    
+                    loadChatHistory();
+                    
+                    const editNicknameBtn = document.getElementById('edit-nickname-btn');
+                    const signOutBtn = document.getElementById('sign-out-btn');
+                    
+                    editNicknameBtn.addEventListener('click', function() {
+                        nicknameInput.value = userNickname || user.displayName || '';
+                        nicknameModal.style.display = 'block';
+                        userModal.style.display = 'none';
+                    });
+                    
+                    signOutBtn.addEventListener('click', function() {
+                        auth.signOut();
+                        userModal.style.display = 'none';
+                    });
+                    
+                } else {
+                    authSection.innerHTML = `
+                        <button class="random-station-btn" id="googleLoginBtn" style="width: 100%;">
+                            <i class="fab fa-google"></i> Войти через Google
+                        </button>
+                    `;
+                    
+                    loadChatHistory();
+                    
+                    document.getElementById('googleLoginBtn').addEventListener('click', signInWithGoogle);
+                }
+            }
+            
+            function saveNickname() {
+                const newNickname = nicknameInput.value.trim();
+                if (newNickname === '') {
+                    showNotification('Введите никнейм', 'error');
+                    return;
                 }
                 
-                chatUnsubscribe = db.collection('chat')
+                userNickname = newNickname;
+                localStorage.setItem('userNickname', userNickname);
+                nicknameModal.style.display = 'none';
+                updateAuthUI(auth.currentUser);
+                showNotification('Никнейм сохранен!', 'success');
+            }
+            
+            function signInWithGoogle() {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                
+                provider.addScope('profile');
+                provider.addScope('email');
+                
+                provider.setCustomParameters({
+                    prompt: 'select_account'
+                });
+                
+                auth.signInWithPopup(provider)
+                    .then((result) => {
+                        const user = result.user;
+                        showNotification(`Добро пожаловать, ${user.displayName || 'Пользователь'}!`, 'success');
+                        userModal.style.display = 'none';
+                    })
+                    .catch((error) => {
+                        console.error('Ошибка входа:', error);
+                        showNotification('Ошибка входа: ' + error.message, 'error');
+                    });
+            }
+
+            function loadChatHistory() {
+                db.collection('chat')
                     .orderBy('timestamp', 'desc')
-                    .limit(50)
-                    .onSnapshot(snapshot => {
-                        chatList.innerHTML = '';
+                    .limit(20)
+                    .get()
+                    .then((snapshot) => {
+                        chatMessages.innerHTML = '';
+                        
+                        if (snapshot.empty) {
+                            chatMessages.innerHTML = '<div class="message">Чат пуст. Будьте первым!</div>';
+                            return;
+                        }
                         
                         const messages = [];
-                        snapshot.forEach(doc => {
-                            messages.push(doc.data());
+                        snapshot.forEach((doc) => {
+                            messages.push({ id: doc.id, ...doc.data() });
                         });
                         
-                        // Переворачиваем массив, чтобы новые сообщения были внизу
-                        messages.reverse();
-                        
-                        messages.forEach(msg => {
-                            const time = msg.timestamp ? 
-                                new Date(msg.timestamp.toDate()).toLocaleTimeString('ru-RU', { 
-                                    hour: '2-digit', 
-                                    minute: '2-digit' 
-                                }) : '--:--';
-                            
-                            const msgElement = document.createElement('div');
-                            msgElement.className = 'msg';
-                            msgElement.innerHTML = `
-                                <div class="username">${msg.username}:</div>
-                                <div class="msg-content">${msg.message}</div>
-                                <div class="msg-time">${time}</div>
-                            `;
-                            chatList.appendChild(msgElement);
+                        messages.sort((a, b) => {
+                            const timeA = a.timestamp?.toDate ? a.timestamp.toDate() : new Date(a.timestamp);
+                            const timeB = b.timestamp?.toDate ? b.timestamp.toDate() : new Date(b.timestamp);
+                            return timeA - timeB;
                         });
                         
-                        // Прокручиваем вниз
-                        chatList.scrollTop = chatList.scrollHeight;
-                    }, error => {
-                        console.error('Ошибка загрузки чата:', error);
+                        messages.forEach((message) => {
+                            addMessageToChat(message);
+                        });
                         
-                        // Если произошла ошибка, показываем примеры сообщений
-                        chatList.innerHTML = `
-                            <div class="msg"><div class="username">Deynik:</div><div class="msg-content">ж</div><div class="msg-time">22:19</div></div>
-                            <div class="msg"><div class="username">Deynik:</div><div class="msg-content">ъ</div><div class="msg-time">14:34</div></div>
-                            <div class="msg"><div class="username">Mikhail Topolev:</div><div class="msg-content">ayayayyyyyyyyyyyyyyyyy</div><div class="msg-time">15:43</div></div>
-                            <div class="msg"><div class="username">Mikhail Topolev:</div><div class="msg-content">😋</div><div class="msg-time">15:43</div></div>
-                            <div class="msg"><div class="username">Deynik:</div><div class="msg-content">привет</div><div class="msg-time">17:15</div></div>
-                            <div class="msg"><div class="username">PinHunYan:</div><div class="msg-content">yap</div><div class="msg-time">18:46</div></div>
-                            <div class="msg"><div class="username">Deynik:</div><div class="msg-content">ку</div><div class="msg-time">19:10</div></div>
-                            <div class="msg"><div class="username">Deynik:</div><div class="msg-content">что слушаем?</div><div class="msg-time">19:11</div></div>
-                        `;
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    });
+            }
+
+            function addMessageToChat(message) {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message';
+                
+                let timeString = 'только что';
+                if (message.timestamp) {
+                    const time = message.timestamp.toDate ? message.timestamp.toDate() : new Date(message.timestamp);
+                    timeString = time.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                }
+                
+                let messageContent = '';
+                
+                if (message.gif) {
+                    messageContent = `
+                        <span class="message-user">${message.userName || 'Аноним'}:</span>
+                        <img src="${message.gif}" style="max-width: 200px; border-radius: 8px; margin-top: 5px;" alt="GIF">
+                        <span class="message-time">${timeString}</span>
+                    `;
+                } else {
+                    messageContent = `
+                        <span class="message-user">${message.userName || 'Аноним'}:</span>
+                        ${message.text || ''}
+                        <span class="message-time">${timeString}</span>
+                    `;
+                }
+                
+                messageElement.innerHTML = messageContent;
+                chatMessages.appendChild(messageElement);
+            }
+
+            function sendMessage() {
+                const user = auth.currentUser;
+                const messageText = chatInput.value.trim();
+                if (messageText === '') return;
+                
+                const displayName = userNickname || (user ? (user.displayName || 'Пользователь') : 'Аноним');
+                
+                const message = {
+                    text: messageText,
+                    userName: displayName,
+                    userId: user ? user.uid : 'anonymous',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                chatSendBtn.disabled = true;
+                chatSendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+                db.collection('chat').add(message)
+                    .then(() => {
+                        chatInput.value = '';
+                    })
+                    .finally(() => {
+                        chatSendBtn.disabled = false;
+                        chatSendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
                     });
             }
             
-            // Функция проверки авторизации
-            function checkAuth() {
-                auth.onAuthStateChanged(user => {
-                    if (user) {
-                        // Пользователь авторизован
-                        userNickname = user.displayName || user.email.split('@')[0];
-                        localStorage.setItem('userNickname', userNickname);
-                    } else {
-                        // Пользователь не авторизован, используем сохраненный никнейм
-                        userNickname = localStorage.getItem('userNickname') || '';
-                    }
-                });
-            }
-            
-            // Функция обновления лайков в Firestore
-            function updateLikesInFirestore() {
-                // Отписываемся от предыдущего слушателя, если он есть
-                if (likesUnsubscribe) {
-                    likesUnsubscribe();
+            function changeGif() {
+                let randomGif;
+                if (currentStation === 'minecraft') {
+                    randomGif = minecraftGifs[Math.floor(Math.random() * minecraftGifs.length)];
+                } else {
+                    randomGif = gifs[Math.floor(Math.random() * gifs.length)];
                 }
                 
-                // Здесь можно добавить логику для сохранения лайков в Firestore
-                // В демо-версии просто сохраняем в localStorage
+                mainGif.style.backgroundImage = `url('${randomGif}')`;
             }
-        });
+            
+            chatInput.addEventListener('input', function() {
+                chatSendBtn.disabled = this.value.trim() === '';
+            });
+            
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !chatSendBtn.disabled) {
+                    sendMessage();
+                }
+            });
+            
+            chatSendBtn.addEventListener('click', sendMessage);
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            chatBtn.addEventListener('click', function() {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                document.querySelector('[data-tab="chat"]').classList.add('active');
+                document.getElementById('chat-tab').classList.add('active');
+            });
+            
+            userBtn.addEventListener('click', function() {
+                userModal.style.display = 'block';
+            });
+            
+            closeUserModal.addEventListener('click', function() {
+                userModal.style.display = 'none';
+            });
+            
+            closeNicknameModal.addEventListener('click', function() {
+                nicknameModal.style.display = 'none';
+            });
+            
+            cancelNicknameBtn.addEventListener('click', function() {
+                nicknameModal.style.display = 'none';
+            });
+            
+            saveNicknameBtn.addEventListener('click', saveNickname);
+            
+            nicknameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') saveNickname();
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === userModal) {
+                    userModal.style.display = 'none';
+                }
+                if (event.target === nicknameModal) {
+                    nicknameModal.style.display = 'none';
+                }
+            });
+            
+            auth.onAuthStateChanged(updateAuthUI);
+            
+            likeButton.addEventListener('click', function() {
+                likeButton.classList.toggle('active');
+                likeButton.querySelector('i').className = likeButton.classList.contains('active') ? 'fas fa-heart' : 'far fa-heart';
+                
+                if (likeButton.classList.contains('active')) {
+                    showHeartEffect();
+                }
+            });
+            
+            refreshButton.addEventListener('click', function() {
+                this.classList.add('reload-animation');
+                setTimeout(() => {
+                    this.classList.remove('reload-animation');
+                }, 500);
+                
+                if (audio) {
+                    const wasPlaying = !audio.paused;
+                    audio.pause();
+                    audio = new Audio(radioStations[currentStation].url + '?nocache=' + new Date().getTime());
+                    
+                    if (wasPlaying) {
+                        isPlaying = true;
+                        playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                        document.getElementById('player-icon').classList.add('playing');
+                        
+                        audio.play().catch(error => {
+                            console.error('Ошибка воспроизведения:', error);
+                            isPlaying = false;
+                            playButton.innerHTML = '<i class="fas fa-play"></i>';
+                            document.getElementById('player-icon').classList.remove('playing');
+                        });
+                    } else {
+                        isPlaying = false;
+                        playButton.innerHTML = '<i class="fas fa-play"></i>';
+                        document.getElementById('player-icon').classList.remove('playing');
+                    }
+                    
+                    changeGif();
+                    showNotification('Станция перезагружена', 'success');
+                }
+            });
+            
+            playButton.addEventListener('click', function() {
+                isPlaying = !isPlaying;
+                
+                if (isPlaying) {
+                    playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                    document.getElementById('player-icon').classList.add('playing');
+                    if (!audio) {
+                        audio = new Audio(radioStations[currentStation].url);
+                    }
+                    audio.play().catch(error => {
+                        console.error('Ошибка воспроизведения:', error);
+                        isPlaying = false;
+                        playButton.innerHTML = '<i class="fas fa-play"></i>';
+                        document.getElementById('player-icon').classList.remove('playing');
+                    });
+                } else {
+                    playButton.innerHTML = '<i class="fas fa-play"></i>';
+                    document.getElementById('player-icon').classList.remove('playing');
+                    if (audio) audio.pause();
+                }
+            });
+            
+            randomStationBtn.addEventListener('click', function() {
+                currentStationIndex = Math.floor(Math.random() * stationIds.length);
+                isPlaying = true;
+                playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                document.getElementById('player-icon').classList.add('playing');
+                changeStation();
+            });
+            
+            prevButton.addEventListener('click', function() {
+                currentStationIndex = (currentStationIndex - 1 + stationIds.length) % stationIds.length;
+                isPlaying = true;
+                playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                document.getElementById('player-icon').classList.add('playing');
+                changeStation();
+            });
+            
+            nextButton.addEventListener('click', function() {
+                currentStationIndex = (currentStationIndex + 1) % stationIds.length;
+                isPlaying = true;
+                playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                document.getElementById('player-icon').classList.add('playing');
+                changeStation();
+            });
+            
+            function changeStation() {
+                currentStation = stationIds[currentStationIndex];
+                updateStationInfo();
+                
+                const stationItems = document.querySelectorAll('.station-list li');
+                stationItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('data-station') === currentStation) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                if (isPlaying) {
+                    if (audio) audio.pause();
+                    audio = new Audio(radioStations[currentStation].url);
+                    audio.play().catch(error => {
+                        console.error('Ошибка воспроизведения:', error);
+                    });
+                }
+                
+                changeGif();
+            }
+            
+            function updateStationInfo() {
+                const station = radioStations[currentStation];
+                document.getElementById('player-station').textContent = station.name;
+                document.getElementById('player-description').textContent = station.description;
+                document.getElementById('player-icon').innerHTML = `<i class="${station.icon}"></i>`;
+                document.getElementById('current-track').textContent = station.currentTrack;
+                document.getElementById('current-artist').textContent = station.currentArtist;
+            }
+        }
     </script>
 </body>
 </html>
