@@ -254,37 +254,36 @@
             background: url('https://i.pinimg.com/originals/7d/04/0e/7d040e94931427709008aaeda14db9c8.gif') center/cover no-repeat;
         }
         
-        .player-container {
-            background: #191414;
-            border-radius: 12px;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: relative;
-            height: 120px;
+        .station-info-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent);
+            padding: 15px;
+            color: white;
+            z-index: 10;
         }
         
-        .station-info {
+        .station-info-overlay-content {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         
-        .player-icon {
-            width: 40px;
-            height: 40px;
+        .station-icon-overlay {
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, #1DB954 0%, #191414 100%);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.1rem;
-            box-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
+            font-size: 1.3rem;
+            box-shadow: 0 0 15px rgba(29, 185, 84, 0.6);
         }
         
-        .player-icon.playing {
+        .station-icon-overlay.playing {
             animation: rotate 10s linear infinite;
         }
         
@@ -293,19 +292,32 @@
             to { transform: rotate(360deg); }
         }
         
-        .station-text {
+        .station-text-overlay {
             flex: 1;
         }
         
-        .station-text h2 {
-            font-size: 1.1rem;
-            margin-bottom: 2px;
+        .station-text-overlay h2 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
             color: #1DB954;
+            text-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
         }
         
-        .station-text p {
+        .station-text-overlay p {
             color: #B3B3B3;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+        }
+        
+        .player-container {
+            background: #191414;
+            border-radius: 12px;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 70px;
         }
         
         .player-controls {
@@ -821,26 +833,27 @@
         <div class="content">
             <div class="gif-container crt-effect">
                 <div class="gif-placeholder" id="mainGif"></div>
+                <div class="station-info-overlay">
+                    <div class="station-info-overlay-content">
+                        <div class="station-icon-overlay" id="station-icon-overlay">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="station-text-overlay">
+                            <h2 id="station-name-overlay">KISS FM</h2>
+                            <p id="station-description-overlay">Лучшие мировые хиты в отличном качестве</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="player-container crt-effect">
-                <div class="station-info">
-                    <div class="player-icon" id="player-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <div class="station-text">
-                        <h2 id="player-station">KISS FM</h2>
-                        <p id="player-description">Лучшие мировые хиты в отличном качестве</p>
-                    </div>
+                <div class="left-side-buttons">
+                    <button class="btn" id="refresh-btn" title="Обновить поток">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
                 </div>
                 
                 <div class="player-controls">
-                    <div class="left-side-buttons">
-                        <button class="btn" id="refresh-btn" title="Обновить поток">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </div>
-                    
                     <div class="player-buttons">
                         <button class="btn" id="prev-btn">
                             <i class="fas fa-step-backward"></i>
@@ -852,12 +865,12 @@
                             <i class="fas fa-step-forward"></i>
                         </button>
                     </div>
-                    
-                    <div class="side-buttons">
-                        <button class="btn" id="like-btn">
-                            <i class="far fa-heart"></i>
-                        </button>
-                    </div>
+                </div>
+                
+                <div class="side-buttons">
+                    <button class="btn" id="like-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
                 </div>
             </div>
             
@@ -1112,6 +1125,9 @@
             const closeFullscreen = document.getElementById('closeFullscreen');
             const heartEffect = document.getElementById('heartEffect');
             const notification = document.getElementById('notification');
+            const stationIconOverlay = document.getElementById('station-icon-overlay');
+            const stationNameOverlay = document.getElementById('station-name-overlay');
+            const stationDescriptionOverlay = document.getElementById('station-description-overlay');
             
             let isPlaying = false;
             let audio = null;
@@ -1176,7 +1192,7 @@
                         currentStationIndex = stationIds.indexOf(stationId);
                         isPlaying = true;
                         playButton.innerHTML = '<i class="fas fa-pause"></i>';
-                        document.getElementById('player-icon').classList.add('playing');
+                        stationIconOverlay.classList.add('playing');
                         changeStation();
                         fullscreenStations.classList.remove('active');
                     });
@@ -1544,18 +1560,18 @@
                     if (wasPlaying) {
                         isPlaying = true;
                         playButton.innerHTML = '<i class="fas fa-pause"></i>';
-                        document.getElementById('player-icon').classList.add('playing');
+                        stationIconOverlay.classList.add('playing');
                         
                         audio.play().catch(error => {
                             console.error('Ошибка воспроизведения:', error);
                             isPlaying = false;
                             playButton.innerHTML = '<i class="fas fa-play"></i>';
-                            document.getElementById('player-icon').classList.remove('playing');
+                            stationIconOverlay.classList.remove('playing');
                         });
                     } else {
                         isPlaying = false;
                         playButton.innerHTML = '<i class="fas fa-play"></i>';
-                        document.getElementById('player-icon').classList.remove('playing');
+                        stationIconOverlay.classList.remove('playing');
                     }
                     
                     changeGif();
@@ -1568,7 +1584,7 @@
                 
                 if (isPlaying) {
                     playButton.innerHTML = '<i class="fas fa-pause"></i>';
-                    document.getElementById('player-icon').classList.add('playing');
+                    stationIconOverlay.classList.add('playing');
                     if (!audio) {
                         audio = new Audio(radioStations[currentStation].url);
                     }
@@ -1576,11 +1592,11 @@
                         console.error('Ошибка воспроизведения:', error);
                         isPlaying = false;
                         playButton.innerHTML = '<i class="fas fa-play"></i>';
-                        document.getElementById('player-icon').classList.remove('playing');
+                        stationIconOverlay.classList.remove('playing');
                     });
                 } else {
                     playButton.innerHTML = '<i class="fas fa-play"></i>';
-                    document.getElementById('player-icon').classList.remove('playing');
+                    stationIconOverlay.classList.remove('playing');
                     if (audio) audio.pause();
                 }
             });
@@ -1589,7 +1605,7 @@
                 currentStationIndex = Math.floor(Math.random() * stationIds.length);
                 isPlaying = true;
                 playButton.innerHTML = '<i class="fas fa-pause"></i>';
-                document.getElementById('player-icon').classList.add('playing');
+                stationIconOverlay.classList.add('playing');
                 changeStation();
                 fullscreenStations.classList.remove('active');
             });
@@ -1598,7 +1614,7 @@
                 currentStationIndex = (currentStationIndex - 1 + stationIds.length) % stationIds.length;
                 isPlaying = true;
                 playButton.innerHTML = '<i class="fas fa-pause"></i>';
-                document.getElementById('player-icon').classList.add('playing');
+                stationIconOverlay.classList.add('playing');
                 changeStation();
             });
             
@@ -1606,7 +1622,7 @@
                 currentStationIndex = (currentStationIndex + 1) % stationIds.length;
                 isPlaying = true;
                 playButton.innerHTML = '<i class="fas fa-pause"></i>';
-                document.getElementById('player-icon').classList.add('playing');
+                stationIconOverlay.classList.add('playing');
                 changeStation();
             });
             
@@ -1635,9 +1651,9 @@
             
             function updateStationInfo() {
                 const station = radioStations[currentStation];
-                document.getElementById('player-station').textContent = station.name;
-                document.getElementById('player-description').textContent = station.description;
-                document.getElementById('player-icon').innerHTML = `<i class="${station.icon}"></i>`;
+                stationNameOverlay.textContent = station.name;
+                stationDescriptionOverlay.textContent = station.description;
+                stationIconOverlay.innerHTML = `<i class="${station.icon}"></i>`;
             }
         }
     </script>
