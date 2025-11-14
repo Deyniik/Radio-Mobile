@@ -36,11 +36,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0.1) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0.1) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.02), rgba(0,0,255,0.03));
+            background-size: 100% 4px, 3px 100%;
             pointer-events: none;
             z-index: 9999;
-            opacity: 0.15;
+            opacity: 0.3;
         }
         
         .vintage-overlay {
@@ -49,11 +51,48 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0.1) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0.1) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.02), rgba(0,0,255,0.03));
+            background-size: 100% 4px, 3px 100%;
             pointer-events: none;
             z-index: 9998;
-            opacity: 0.1;
+            opacity: 0.2;
+        }
+        
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.2) 0px,
+                rgba(0, 0, 0, 0.2) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 9997;
+            opacity: 0.5;
+        }
+        
+        .flicker {
+            animation: flicker 0.15s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            5% { opacity: 0.95; }
+            10% { opacity: 0.98; }
+            15% { opacity: 0.92; }
+            20% { opacity: 0.99; }
+            25% { opacity: 0.93; }
+            30% { opacity: 1; }
+            70% { opacity: 0.98; }
+            80% { opacity: 0.99; }
+            100% { opacity: 0.97; }
         }
         
         .loading-screen {
@@ -67,7 +106,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 10000;
         }
         
         .loading-gif {
@@ -83,10 +122,10 @@
             color: #1DB954;
             text-shadow: 0 0 10px rgba(29, 185, 84, 0.7);
             letter-spacing: 1px;
-            animation: flicker 1.5s infinite alternate;
+            animation: textFlicker 1.5s infinite alternate;
         }
         
-        @keyframes flicker {
+        @keyframes textFlicker {
             0%, 19%, 21%, 23%, 25%, 27%, 29%, 31%, 33%, 35%, 37%, 39%, 80%, 100% {
                 opacity: 1;
                 text-shadow: 0 0 10px rgba(29, 185, 84, 0.7), 0 0 20px rgba(29, 185, 84, 0.5);
@@ -340,7 +379,15 @@
             top: 50%;
             transform: translateY(-50%);
             display: flex;
-            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .left-side-buttons {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
             gap: 10px;
         }
         
@@ -379,6 +426,44 @@
         .tab-content.active {
             display: flex;
             flex-direction: column;
+        }
+        
+        .stations-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .categories-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            padding: 5px 0;
+        }
+        
+        .category-btn {
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #B3B3B3;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .category-btn:hover {
+            background: rgba(29, 185, 84, 0.2);
+            color: white;
+        }
+        
+        .category-btn.active {
+            background: rgba(29, 185, 84, 0.3);
+            color: #1DB954;
+            border-color: #1DB954;
         }
         
         .station-list {
@@ -449,6 +534,7 @@
             scrollbar-color: rgba(29, 185, 84, 0.3) #191414;
             display: flex;
             flex-direction: column;
+            padding-bottom: 10px;
         }
         
         .chat-messages::-webkit-scrollbar {
@@ -465,7 +551,7 @@
         }
         
         .message {
-            padding: 6px 8px;
+            padding: 8px 10px;
             margin: 4px 0;
             background: rgba(40, 40, 40, 0.6);
             border-radius: 8px;
@@ -489,6 +575,7 @@
         .chat-input-container {
             display: flex;
             gap: 8px;
+            padding: 8px 0;
         }
         
         .chat-input {
@@ -496,11 +583,11 @@
             background: rgba(40, 40, 40, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
-            padding: 8px 10px;
+            padding: 12px 10px;
             border-radius: 15px;
             font-size: 0.8rem;
             outline: none;
-            height: 36px;
+            height: 44px;
         }
         
         .chat-input:focus {
@@ -511,12 +598,12 @@
             background: rgba(29, 185, 84, 0.3);
             border: 1px solid #1DB954;
             color: white;
-            padding: 8px 12px;
+            padding: 12px 15px;
             border-radius: 15px;
             cursor: pointer;
             font-size: 0.8rem;
             transition: all 0.3s ease;
-            height: 36px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -789,10 +876,58 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .category-title {
+            font-size: 0.9rem;
+            color: #1DB954;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid rgba(29, 185, 84, 0.3);
+        }
+        
+        .fullscreen-stations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #121212;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 15px;
+        }
+        
+        .fullscreen-stations.active {
+            display: flex;
+        }
+        
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .close-fullscreen {
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
     </style>
 </head>
-<body class="retro-theme">
+<body class="retro-theme flicker">
     <div class="vintage-overlay"></div>
+    <div class="scanlines"></div>
     
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-gif"></div>
@@ -803,9 +938,6 @@
         <header>
             <div class="logo">Deynik Radio</div>
             <div class="header-buttons">
-                <button class="header-btn" id="chat-btn" title="Чат">
-                    <i class="fas fa-comments"></i>
-                </button>
                 <button class="header-btn" id="user-btn" title="Профиль">
                     <i class="fas fa-user"></i>
                 </button>
@@ -833,6 +965,12 @@
                 </div>
                 
                 <div class="player-controls">
+                    <div class="left-side-buttons">
+                        <button class="btn" id="refresh-btn" title="Обновить поток">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    
                     <div class="player-buttons">
                         <button class="btn" id="prev-btn">
                             <i class="fas fa-step-backward"></i>
@@ -844,15 +982,12 @@
                             <i class="fas fa-step-forward"></i>
                         </button>
                     </div>
-                </div>
-                
-                <div class="side-buttons">
-                    <button class="btn" id="refresh-btn" title="Обновить поток">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                    <button class="btn" id="like-btn">
-                        <i class="far fa-heart"></i>
-                    </button>
+                    
+                    <div class="side-buttons">
+                        <button class="btn" id="like-btn">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -862,9 +997,18 @@
             </div>
             
             <div class="tab-content active" id="stations-tab">
-                <ul class="station-list" id="station-list"></ul>
-                <div class="random-station-btn" id="random-station-btn">
-                    <i class="fas fa-random"></i> Случайное радио
+                <div class="stations-container">
+                    <div class="categories-container" id="categories-container">
+                        <button class="category-btn active" data-category="all">Все</button>
+                        <button class="category-btn" data-category="lofi">Lo-Fi</button>
+                        <button class="category-btn" data-category="thematic">Тематические</button>
+                        <button class="category-btn" data-category="no-copyright">Без АП</button>
+                        <button class="category-btn" data-category="international">Международные</button>
+                    </div>
+                    <ul class="station-list" id="station-list"></ul>
+                    <div class="random-station-btn" id="random-station-btn">
+                        <i class="fas fa-random"></i> Случайное радио
+                    </div>
                 </div>
             </div>
             
@@ -885,6 +1029,26 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <div class="fullscreen-stations" id="fullscreenStations">
+        <div class="fullscreen-header">
+            <h2>Радиостанции</h2>
+            <button class="close-fullscreen" id="closeFullscreen">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="categories-container">
+            <button class="category-btn active" data-category="all">Все</button>
+            <button class="category-btn" data-category="lofi">Lo-Fi</button>
+            <button class="category-btn" data-category="thematic">Тематические</button>
+            <button class="category-btn" data-category="no-copyright">Без АП</button>
+            <button class="category-btn" data-category="international">Международные</button>
+        </div>
+        <ul class="station-list" id="fullscreen-station-list"></ul>
+        <div class="random-station-btn" id="fullscreen-random-station-btn">
+            <i class="fas fa-random"></i> Случайное радио
         </div>
     </div>
     
@@ -941,7 +1105,8 @@
                 currentTrack: "Популярные хиты",
                 currentArtist: "KISS FM",
                 quality: "128kbps",
-                icon: "fas fa-heart"
+                icon: "fas fa-heart",
+                category: "international"
             },
             gaga: {
                 name: "Lady Gaga Radio",
@@ -950,7 +1115,8 @@
                 currentTrack: "Lady Gaga Hits",
                 currentArtist: "Lady Gaga",
                 quality: "128kbps",
-                icon: "fas fa-paw"
+                icon: "fas fa-paw",
+                category: "international"
             },
             rp: {
                 name: "Radio Paradise",
@@ -959,7 +1125,8 @@
                 currentTrack: "Eclectic Mix",
                 currentArtist: "Radio Paradise",
                 quality: "FLAC 900+kbps",
-                icon: "fas fa-music"
+                icon: "fas fa-music",
+                category: "no-copyright"
             },
             lofi: {
                 name: "LoFi Girl",
@@ -968,7 +1135,48 @@
                 currentTrack: "Chill Beats",
                 currentArtist: "LoFi Artist",
                 quality: "192kbps",
-                icon: "fas fa-moon"
+                icon: "fas fa-moon",
+                category: "lofi"
+            },
+            z100: {
+                name: "Z100 New York",
+                url: "https://stream.revma.ihrhls.com/zc1477",
+                description: "Поп-хиты от iHeartRadio",
+                currentTrack: "Top 40 Hit",
+                currentArtist: "Popular Artist",
+                quality: "128kbps",
+                icon: "fas fa-broadcast-tower",
+                category: "international"
+            },
+            jazz: {
+                name: "Jazz24",
+                url: "https://knkx-live-a.edge.audiocdn.com/6285_128k?aw_0_1st.playerid=jazz24.org&uuid=s9a9vs32",
+                description: "Лучшие джазовые композиции",
+                currentTrack: "Smooth Jazz",
+                currentArtist: "Jazz Master",
+                quality: "192kbps",
+                icon: "fas fa-music",
+                category: "international"
+            },
+            chillhop: {
+                name: "Chillhop Radio",
+                url: "https://stream-178.zeno.fm/f3wvbbqmdg8uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJmM3d2YmJxbWRnOHV2IiwiaG9zdCI6InN0cmVhbS0xNzguemVuby5mbSIsInJ0dGwiOjUsImp0aSI6Ii1MelctMUFsUmtLeHZoaWkwUXBSZWciLCJpYXQiOjE3NTg2NDUyNDAsImV4cCI6MTc1ODY0NTMwMH0.Ef_7t2RVX9WvfCeKorGs2acDLze7Sp8n5bzo3Ix58xE",
+                description: "Расслабляющие биты для работы и отдыха без авторских прав",
+                currentTrack: "Chill Beats",
+                currentArtist: "Chillhop Music",
+                quality: "128kbps",
+                icon: "fas fa-moon",
+                category: "lofi"
+            },
+            lofihiphop: {
+                name: "LoFi Hip Hop",
+                url: "https://stream-158.zeno.fm/0r0xa792kwzuv",
+                description: "Лучшие хип-хоп биты без авторских прав",
+                currentTrack: "Hip Hop Beats",
+                currentArtist: "LoFi Artist",
+                quality: "128kbps",
+                icon: "fas fa-headphones",
+                category: "lofi"
             },
             minecraft: {
                 name: "MINECRAFT Lo Fi",
@@ -977,7 +1185,28 @@
                 currentTrack: "Minecraft Ambience",
                 currentArtist: "C418 Lo-Fi Remix",
                 quality: "128kbps",
-                icon: "fas fa-cube"
+                icon: "fas fa-cube",
+                category: "lofi"
+            },
+            halloween: {
+                name: "Halloween Radio",
+                url: "https://radio1.streamserver.link:8000/hrm-aac",
+                description: "Музыка для Хэллоуина и ужастиков",
+                currentTrack: "Spooky Sounds",
+                currentArtist: "Halloween FM",
+                quality: "128kbps",
+                icon: "fas fa-ghost",
+                category: "thematic"
+            },
+            christmas: {
+                name: "Christmas Radio",
+                url: "https://1000christmashits.stream.laut.fm/1000christmashits",
+                description: "Новогодние и рождественские хиты",
+                currentTrack: "Christmas Songs",
+                currentArtist: "Various Artists",
+                quality: "128kbps",
+                icon: "fas fa-tree",
+                category: "thematic"
             }
         };
 
@@ -1012,8 +1241,8 @@
             const likeButton = document.getElementById('like-btn');
             const refreshButton = document.getElementById('refresh-btn');
             const randomStationBtn = document.getElementById('random-station-btn');
+            const fullscreenRandomStationBtn = document.getElementById('fullscreen-random-station-btn');
             const mainGif = document.getElementById('mainGif');
-            const chatBtn = document.getElementById('chat-btn');
             const userBtn = document.getElementById('user-btn');
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -1029,6 +1258,11 @@
             const nicknameInput = document.getElementById('nickname-input');
             const googleLoginBtn = document.getElementById('googleLoginBtn');
             const stationList = document.getElementById('station-list');
+            const fullscreenStationList = document.getElementById('fullscreen-station-list');
+            const categoriesContainer = document.getElementById('categories-container');
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            const fullscreenStations = document.getElementById('fullscreenStations');
+            const closeFullscreen = document.getElementById('closeFullscreen');
             const heartEffect = document.getElementById('heartEffect');
             const notification = document.getElementById('notification');
             
@@ -1039,21 +1273,49 @@
             let userNickname = localStorage.getItem('userNickname') || '';
             let stationLikes = {};
             let userLikedStations = new Set();
+            let chatUnsubscribe = null;
+            let currentCategory = 'all';
             
             loadStationList();
+            loadFullscreenStationList();
             updateStationInfo();
             changeGif();
+            setupCategories();
             
             function loadStationList() {
                 stationList.innerHTML = '';
                 
-                stationIds.forEach(stationId => {
-                    const stationData = radioStations[stationId];
+                const allStations = [
+                    { id: 'kissint', category: 'international', title: 'Международные' },
+                    { id: 'gaga', category: 'international' },
+                    { id: 'z100', category: 'international' },
+                    { id: 'jazz', category: 'international' },
+                    { id: 'rp', category: 'no-copyright', title: 'Без авторских прав' },
+                    { id: 'lofi', category: 'lofi', title: 'Lo-Fi' },
+                    { id: 'chillhop', category: 'lofi' },
+                    { id: 'lofihiphop', category: 'lofi' },
+                    { id: 'minecraft', category: 'lofi' },
+                    { id: 'halloween', category: 'thematic', title: 'Тематические' },
+                    { id: 'christmas', category: 'thematic' }
+                ];
+                
+                let lastCategory = '';
+                
+                allStations.forEach(station => {
+                    const stationData = radioStations[station.id];
+                    
+                    if (station.title && station.title !== lastCategory) {
+                        const categoryTitle = document.createElement('div');
+                        categoryTitle.className = 'category-title';
+                        categoryTitle.textContent = station.title;
+                        stationList.appendChild(categoryTitle);
+                        lastCategory = station.title;
+                    }
                     
                     const stationItem = document.createElement('li');
-                    stationItem.setAttribute('data-station', stationId);
+                    stationItem.setAttribute('data-station', station.id);
                     
-                    if (stationId === currentStation) {
+                    if (station.id === currentStation) {
                         stationItem.classList.add('active');
                     }
                     
@@ -1070,9 +1332,131 @@
                         playButton.innerHTML = '<i class="fas fa-pause"></i>';
                         document.getElementById('player-icon').classList.add('playing');
                         changeStation();
+                        fullscreenStations.classList.remove('active');
                     });
                     
                     stationList.appendChild(stationItem);
+                });
+            }
+            
+            function loadFullscreenStationList() {
+                fullscreenStationList.innerHTML = '';
+                
+                const allStations = [
+                    { id: 'kissint', category: 'international', title: 'Международные' },
+                    { id: 'gaga', category: 'international' },
+                    { id: 'z100', category: 'international' },
+                    { id: 'jazz', category: 'international' },
+                    { id: 'rp', category: 'no-copyright', title: 'Без авторских прав' },
+                    { id: 'lofi', category: 'lofi', title: 'Lo-Fi' },
+                    { id: 'chillhop', category: 'lofi' },
+                    { id: 'lofihiphop', category: 'lofi' },
+                    { id: 'minecraft', category: 'lofi' },
+                    { id: 'halloween', category: 'thematic', title: 'Тематические' },
+                    { id: 'christmas', category: 'thematic' }
+                ];
+                
+                let lastCategory = '';
+                
+                allStations.forEach(station => {
+                    const stationData = radioStations[station.id];
+                    
+                    if (station.title && station.title !== lastCategory) {
+                        const categoryTitle = document.createElement('div');
+                        categoryTitle.className = 'category-title';
+                        categoryTitle.textContent = station.title;
+                        fullscreenStationList.appendChild(categoryTitle);
+                        lastCategory = station.title;
+                    }
+                    
+                    const stationItem = document.createElement('li');
+                    stationItem.setAttribute('data-station', station.id);
+                    
+                    if (station.id === currentStation) {
+                        stationItem.classList.add('active');
+                    }
+                    
+                    stationItem.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <span class="station-icon"><i class="${stationData.icon}"></i></span> ${stationData.name}
+                        </div>
+                    `;
+                    
+                    stationItem.addEventListener('click', function() {
+                        const stationId = this.getAttribute('data-station');
+                        currentStationIndex = stationIds.indexOf(stationId);
+                        isPlaying = true;
+                        playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                        document.getElementById('player-icon').classList.add('playing');
+                        changeStation();
+                        fullscreenStations.classList.remove('active');
+                    });
+                    
+                    fullscreenStationList.appendChild(stationItem);
+                });
+            }
+            
+            function setupCategories() {
+                categoryBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        categoryBtns.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        currentCategory = this.getAttribute('data-category');
+                        filterStationsByCategory(currentCategory);
+                    });
+                });
+            }
+            
+            function filterStationsByCategory(category) {
+                const stationItems = document.querySelectorAll('.station-list li');
+                const fullscreenStationItems = document.querySelectorAll('#fullscreen-station-list li');
+                
+                stationItems.forEach(item => {
+                    const stationId = item.getAttribute('data-station');
+                    const station = radioStations[stationId];
+                    
+                    if (category === 'all' || station.category === category) {
+                        item.style.display = 'flex';
+                        if (item.previousElementSibling && item.previousElementSibling.classList.contains('category-title')) {
+                            item.previousElementSibling.style.display = 'block';
+                        }
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                fullscreenStationItems.forEach(item => {
+                    const stationId = item.getAttribute('data-station');
+                    const station = radioStations[stationId];
+                    
+                    if (category === 'all' || station.category === category) {
+                        item.style.display = 'flex';
+                        if (item.previousElementSibling && item.previousElementSibling.classList.contains('category-title')) {
+                            item.previousElementSibling.style.display = 'block';
+                        }
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                document.querySelectorAll('.category-title').forEach(title => {
+                    const nextSibling = title.nextElementSibling;
+                    if (!nextSibling || nextSibling.style.display === 'none') {
+                        let hasVisible = false;
+                        let sibling = title.nextElementSibling;
+                        while (sibling && !sibling.classList.contains('category-title')) {
+                            if (sibling.style.display !== 'none') {
+                                hasVisible = true;
+                                break;
+                            }
+                            sibling = sibling.nextElementSibling;
+                        }
+                        if (!hasVisible) {
+                            title.style.display = 'none';
+                        } else {
+                            title.style.display = 'block';
+                        }
+                    }
                 });
             }
             
@@ -1198,15 +1582,17 @@
             }
 
             function loadChatHistory() {
-                db.collection('chat')
+                if (chatUnsubscribe) chatUnsubscribe();
+                
+                chatUnsubscribe = db.collection('chat')
                     .orderBy('timestamp', 'desc')
-                    .limit(20)
-                    .get()
-                    .then((snapshot) => {
+                    .limit(50)
+                    .onSnapshot((snapshot) => {
                         chatMessages.innerHTML = '';
                         
                         if (snapshot.empty) {
                             chatMessages.innerHTML = '<div class="message">Чат пуст. Будьте первым!</div>';
+                            scrollChatToBottom();
                             return;
                         }
                         
@@ -1225,8 +1611,14 @@
                             addMessageToChat(message);
                         });
                         
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        scrollChatToBottom();
                     });
+            }
+            
+            function scrollChatToBottom() {
+                setTimeout(() => {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 100);
             }
 
             function addMessageToChat(message) {
@@ -1279,6 +1671,11 @@
                 db.collection('chat').add(message)
                     .then(() => {
                         chatInput.value = '';
+                        scrollChatToBottom();
+                    })
+                    .catch(error => {
+                        console.error('Ошибка отправки сообщения:', error);
+                        showNotification('Ошибка отправки сообщения', 'error');
                     })
                     .finally(() => {
                         chatSendBtn.disabled = false;
@@ -1318,15 +1715,13 @@
                     
                     this.classList.add('active');
                     document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    if (tabId === 'stations') {
+                        fullscreenStations.classList.add('active');
+                    } else {
+                        fullscreenStations.classList.remove('active');
+                    }
                 });
-            });
-            
-            chatBtn.addEventListener('click', function() {
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                document.querySelector('[data-tab="chat"]').classList.add('active');
-                document.getElementById('chat-tab').classList.add('active');
             });
             
             userBtn.addEventListener('click', function() {
@@ -1349,6 +1744,10 @@
             
             nicknameInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') saveNickname();
+            });
+            
+            closeFullscreen.addEventListener('click', function() {
+                fullscreenStations.classList.remove('active');
             });
             
             window.addEventListener('click', function(event) {
@@ -1432,6 +1831,16 @@
                 playButton.innerHTML = '<i class="fas fa-pause"></i>';
                 document.getElementById('player-icon').classList.add('playing');
                 changeStation();
+                fullscreenStations.classList.remove('active');
+            });
+            
+            fullscreenRandomStationBtn.addEventListener('click', function() {
+                currentStationIndex = Math.floor(Math.random() * stationIds.length);
+                isPlaying = true;
+                playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                document.getElementById('player-icon').classList.add('playing');
+                changeStation();
+                fullscreenStations.classList.remove('active');
             });
             
             prevButton.addEventListener('click', function() {
@@ -1456,6 +1865,14 @@
                 
                 const stationItems = document.querySelectorAll('.station-list li');
                 stationItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('data-station') === currentStation) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                const fullscreenStationItems = document.querySelectorAll('#fullscreen-station-list li');
+                fullscreenStationItems.forEach(item => {
                     item.classList.remove('active');
                     if (item.getAttribute('data-station') === currentStation) {
                         item.classList.add('active');
